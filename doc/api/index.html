@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>dart2js_info - Dart API docs</title>
+    <!-- required because all the links are pseudo-absolute -->
+    <base href=".">
+
+    <link href='https://fonts.googleapis.com/css?family=Source+Code+Pro|Roboto:500,400italic,300,400' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="static-assets/prettify.css">
+    <link rel="stylesheet" href="static-assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="static-assets/styles.css">
+
+    <meta name="description" content="dart2js_info API docs, for the Dart programming language.">
+    <link rel="icon" href="static-assets/favicon.png">
+
+    <!-- Do not remove placeholder -->
+    <!-- Header Placeholder -->
+</head>
+
+<body>
+
+<div id="overlay-under-drawer"></div>
+
+<header class="container-fluid" id="title">
+    <nav class="navbar navbar-fixed-top">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-12 contents">
+              <ol class="breadcrumbs gt-separated hidden-xs">
+                  <li class="self-crumb">dart2js_info</li>
+              </ol>
+              <div class="self-name">dart2js_info</div>
+              <form class="search navbar-right" role="search">
+                <input type="text" id="search-box" disabled class="form-control typeahead" placeholder="Search">
+              </form>
+            </div> <!-- /col -->
+          </div> <!-- /row -->
+        </div> <!-- /container -->
+    </nav>
+
+    <div class="container masthead">
+      <div class="row">
+        <div class="col-sm-12 contents">
+          <ol class="breadcrumbs gt-separated visible-xs">
+          </ol>
+          <div class="title-description">
+              <h1 class="title">
+                  <div class="kind">package</div> dart2js_info
+              </h1>
+          </div>
+          <ul class="subnav">
+              <li><a href="index.html#libraries">Libraries</a></li>
+          </ul>
+        </div> <!-- /col -->
+      </div> <!-- /row -->
+    </div> <!-- /container -->
+
+</header>
+
+<div class="container body">
+  <div class="row">
+
+  <div class="col-xs-6 col-sm-3 col-md-2 sidebar sidebar-offcanvas-left">
+    <h5>dart2js_info</h5>
+
+    <ol>
+      <li class="section-title"><a href="index.html#libraries">Libraries</a></li>
+      <li><a href="dart2js_info.info/dart2js_info.info-library.html">dart2js_info.info</a></li>
+    </ol>
+  </div>
+
+  <div class="col-xs-12 col-sm-9 col-md-8 main-content">
+
+      <section class="desc markdown">
+      
+            <h1>Dart2js Info</h1>
+<p>This package contains libraries and tools you can use to process <code>.info.json</code>
+files, which are produced when running dart2js with <code>--dump-info</code>.</p>
+<p>The <code>.info.json</code> files contain data about each element included in
+the output of your program. The data includes information such as:</p><ul><li>the size that each function adds to the <code>.dart.js</code> output,</li><li>dependencies between functions,</li><li>how the code is clustered when using deferred libraries, and</li><li>the declared and inferred type of each function argument.</li></ul>
+<p>All of this information can help you understand why some piece of code is
+included in your compiled application, and how far was dart2js able to
+understand your code. This data can help you make changes to improve the quality
+and size of your framework or app.</p>
+<p>This package focuses on gathering libraries and tools that summarize all of that
+information. Bear in mind that even with all these tools, it is not trivial to
+isolate code-size issues. We just hope that these tools make things a bit
+earier.</p>
+<h2>Status</h2>
+<p>Currently, most tools available here can be used to analyze code-size and
+attibution of code-size to different parts of your app. With time, we hope to
+add more data to the <code>.info.json</code> files, and include better tools to help
+understand the results of type inference.</p>
+<p>This package is still in flux and we might make breaking changes at any time.
+Our current goal is not to provide a stable API, we mainly want to expose the
+functionality and iterate on it.  We recommend that you pin a specific version
+of this package and update when needed.</p>
+<h2>Info API</h2>
+<p><a href="https://github.com/dart-lang/dart2js_info/blob/master/lib/info.dart">dumped info</a> exposes a Dart representation of the <code>.info.json</code> files.
+You can parse the information using <code>AllInfo.parseFromJson</code>. For example:</p>
+<pre class="dart"><code>import 'dart:convert';
+import 'dart:io';
+
+import 'package:dart2js_info/info.dart';
+
+main(args) {
+  var infoPath = args[0];
+  var json = JSON.decode(new File(infoPath).readAsStringSync());
+  var info = AllInfo.parseFromJson(json);
+  ...
+</code></pre>
+<h2>Available tools</h2>
+<p>The following tools are a available today:</p><ul><li>
+<p><a href="https://github.com/dart-lang/dart2js_info/blob/master/bin/code_deps.dart"><code>code_deps.dart</code></a>: simple tool that can answer queries about the
+dependency between functions and fields in your program. Currently it only
+supports the <code>some_path</code> query, which shows a dependency path from one
+function to another.</p></li><li>
+<p><a href="https://github.com/dart-lang/dart2js_info/blob/master/bin/library_size_split.dart"><code>library_size_split</code></a>: a tool that shows how much code was
+attributed to each library. This tool is configurable so it can group data
+in many ways (e.g. to tally together all libraries that belong to a package,
+or all libraries that match certain name pattern).</p></li><li>
+<p><a href="https://github.com/dart-lang/dart2js_info/blob/master/bin/function_size_analysis.dart"><code>function_size_analysis</code></a>: a tool that shows how much
+code was attributed to each function. This tool also uses depedency
+information to compute dominance and reachability data. This information can
+sometimes help determine how much savings could come if the function was not
+included in the program.</p></li><li>
+<p><a href="https://github.com/dart-lang/dart2js_info/blob/master/bin/coverage_log_server.dart"><code>coverage_log_server</code></a> and <a href="https://github.com/dart-lang/dart2js_info/blob/master/bin/live_code_size_analsysis.dart"><code>live_code_size_analysis</code></a>:
+dart2js has an experimental feature to gather coverage data of your
+application. The <code>coverage_log_server</code> can record this data, and
+<code>live_code_size_analysis</code> can correlate that with the <code>.info.json</code>, so you
+determine why code that is not used is being included in your app.</p></li></ul>
+<h2>Features and bugs</h2>
+<p>Please file feature requests and bugs at the <a href="https://github.com/dart-lang/dart2js_info/issues">issue tracker</a>.</p>
+      
+      </section>
+
+    <section class="summary" id="libraries">
+      <h2>Libraries</h2>
+      <dl>
+          <dt id="dart2js_info.info">
+            <span class="name "><a href="dart2js_info.info/dart2js_info.info-library.html">dart2js_info.info</a></span>
+          </dt>
+          <dd>
+            
+            <p>Data produced by dart2js when run with the <code>--dump-info</code> flag.</p>
+          </dd>
+      </dl>
+    </section>
+
+  </div> <!-- /.main-content -->
+
+  <div class="col-xs-6 col-sm-6 col-md-2 sidebar sidebar-offcanvas-right">
+
+  </div><!--/.sidebar-offcanvas-right-->
+
+  </div> <!-- row -->
+</div> <!-- container -->
+
+<footer>
+    <div class="container-fluid">
+        <div class="container">
+            <p class="text-center">
+                <span class="no-break">
+                  dart2js_info 0.0.1 api docs
+                </span>
+                &bull;
+                <span class="copyright no-break">
+                  <a href="https://www.dartlang.org">
+                    <img src="static-assets/favicon.png" alt="Dart" title="Dart"width="16" height="16">
+                  </a>
+                </span>
+                &bull;
+                <span class="copyright no-break">
+                  <a href="http://creativecommons.org/licenses/by-sa/4.0/">cc license</a>
+                </span>
+            </p>
+        </div>
+    </div>
+</footer>
+
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="static-assets/typeahead.bundle.min.js"></script>
+<script src="static-assets/prettify.js"></script>
+<script src="static-assets/script.js"></script>
+<!-- Do not remove placeholder -->
+<!-- Footer Placeholder -->
+
+<!-- Made with <3 by dartdoc version 0.5.0+2 -->
+</body>
+
+</html>
