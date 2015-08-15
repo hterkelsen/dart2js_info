@@ -99,7 +99,7 @@ Our current goal is not to provide a stable API, we mainly want to expose the
 functionality and iterate on it.  We recommend that you pin a specific version
 of this package and update when needed.</p>
 <h2>Info API</h2>
-<p><a href="https://github.com/dart-lang/dart2js_info/blob/master/lib/info.dart">dumped info</a> exposes a Dart representation of the <code>.info.json</code> files.
+<p><a href="http://dart-lang.github.io/dart2js_info/doc/api/dart2js_info.info/AllInfo-class.html">AllInfo</a> exposes a Dart representation of the <code>.info.json</code> files.
 You can parse the information using <code>AllInfo.parseFromJson</code>. For example:</p>
 <pre class="dart"><code>import 'dart:convert';
 import 'dart:io';
@@ -127,13 +127,139 @@ code was attributed to each function. This tool also uses depedency
 information to compute dominance and reachability data. This information can
 sometimes help determine how much savings could come if the function was not
 included in the program.</p></li><li>
-<p><a href="https://github.com/dart-lang/dart2js_info/blob/master/bin/coverage_log_server.dart"><code>coverage_log_server</code></a> and <a href="https://github.com/dart-lang/dart2js_info/blob/master/bin/live_code_size_analsysis.dart"><code>live_code_size_analysis</code></a>:
+<p><a href="https://github.com/dart-lang/dart2js_info/blob/master/bin/coverage_log_server.dart"><code>coverage_log_server</code></a> and <a href="https://github.com/dart-lang/dart2js_info/blob/master/bin/live_code_size_analysis.dart"><code>live_code_size_analysis</code></a>:
 dart2js has an experimental feature to gather coverage data of your
 application. The <code>coverage_log_server</code> can record this data, and
 <code>live_code_size_analysis</code> can correlate that with the <code>.info.json</code>, so you
 determine why code that is not used is being included in your app.</p></li></ul>
-<h2>Features and bugs</h2>
-<p>Please file feature requests and bugs at the <a href="https://github.com/dart-lang/dart2js_info/issues">issue tracker</a>.</p>
+<p>Next we describe in detail how to use each of these tools.</p>
+<h3>Code deps tool</h3>
+<p>This command-line tool can be used to query for code dependencies. Currently
+this tool only supports the <code>some_path</code> query, which gives you the shortest path
+for how one function depends on another.</p>
+<p>Run this tool as follows:</p>
+<pre class="bash"><code>pub global activate dart2js_info # only needed once
+pub global run dart2js_info:code_deps out.js.info.json some_path main foo
+</code></pre>
+<p>The arguments to the query are regular expressions that can be used to
+select a single element in your program. If your regular expression is too
+general and has more than one match, this tool will pick
+the first match and ignore the rest. Regular expressions are matched against
+a fully qualified element name, which includes the library and class name
+(if any) that contains it. A typical qualified name is of this form:</p>
+<pre><code>libraryName::ClassName.elementName
+</code></pre>
+<p>If the name of a function your are looking for is unique enough, it might be
+sufficient to just write that name as your regular expression.</p>
+<h3>Library size split tool</h3>
+<p>This command-line tool shows the size distribution of generated code among
+libraries. It can be run as follows:</p>
+<pre class="bash"><code>pub global activate dart2js_info # only needed once
+pub global run dart2js_info:library_size_split out.js.info.json
+</code></pre>
+<p>Libraries can be grouped using regular expressions. You can
+specify what regular expressions to use by providing a <code>grouping.yaml</code> file:</p>
+<pre class="bash"><code>pub global run dart2js_info:library_size_split out.js.info.json grouping.yaml
+</code></pre>
+<p>The format of the <code>grouping.yaml</code> file is as follows:</p>
+<pre class="yaml"><code>groups:
+- { regexp: "package:(foo)/*.dart", name: "group name 1", cluster: 2}
+- { regexp: "dart:.*",              name: "group name 2", cluster: 3}
+</code></pre>
+<p>The file should include a single key <code>groups</code> containing a list of group
+specifications.  Each group is specified by a map of 3 entries:</p><ul><li>
+<p><code>regexp</code> (required): a regexp used to match entries that belong to the
+  group.</p></li><li>
+<p><code>name</code> (optional): the name given to this group in the output table. If
+  omitted, the name is derived from the regexp as the match's group(1) or
+  group(0) if no group was defined. When names are omitted the group
+  specification implicitly defines several groups, one per observed name.</p></li><li>
+<p><code>cluster</code> (optional): a clustering index for how data is shown in a table.
+  Groups with higher cluster indices are shown later in the table after a
+  dividing line. If missing, the cluster index defaults to 0.</p></li></ul>
+<p>Here is an example configuration, with comments about what each entry does:</p>
+<pre class="yaml"><code>groups:
+# This group shows the total size of all libraries together, it is shown in
+# cluster #3, which happens to be the last cluster in this example:
+- name: "Total (excludes preambles, statics &amp; consts)"
+  regexp: ".*"
+  cluster: 3
+
+# This group shows the total size for all libraries that were loaded from
+# file:// urls:
+- { name: "Loose files", regexp: "file://.*", cluster: 2}
+
+# This group shows the total size of all code loaded from packages:
+- { name: "All packages", regexp: "package:.*", cluster: 2}
+
+# This group shows the total size of all code loaded from core libraries:
+- { name: "Core libs", regexp: "dart:.*", cluster: 2}
+
+# This group shows the total size of all libraries in a single package. Here
+# we omitted the `name` entry, instead we extract it from the regexp
+# directly.  In this case, the name will be the package-name portion of the
+# package-url (determined by group(1) of the regexp).
+- { regexp: "package:([^/]*)", cluster: 1}
+
+# The next two groups match the entire library url as the name of the group.
+- regexp: "package:.*"
+- regexp: "dart:.*"
+
+# If your code lives under /my/project/dir, this will match any file loaded
+from a file:// url, and we use as a name the relative path to it.
+- regexp: "file:///my/project/dir/(.*)"
+</code></pre>
+<h3>Function size analysis tool</h3>
+<p>This command-line tool presents how much each function contributes to the total
+code of your application.  We use dependency information to compute dominance
+and reachability data as well.</p>
+<p>When you run:</p>
+<pre class="bash"><code>pub global activate dart2js_info # only needed once
+pub global run dart2js_info:function_size_analysis out.js.info.json
+</code></pre>
+<p>the tool produces a table output with lots of entries. Here is an example entry
+with the corresponding table header:</p>
+<pre><code> --- Results per element (field or function) ---
+    element size     dominated size     reachable size Element identifier
+    ...
+     275   0.01%     283426  13.97%    1506543  74.28% some.library.name::ClassName.myMethodName
+</code></pre>
+<p>Such entry means that the function <code>myMethodName</code> uses 275 bytes, which is 0.01%
+of the application. That function however calls other functions, which
+transitively can include up to 74.28% of the application size. Of all those
+reachable functions, some of them are reachable from other parts of the program,
+but a subset are dominated by <code>myMethodName</code>, that is, other parts of the
+program starting from <code>main</code> would first go through <code>myMethodName</code> before
+reaching those functions. In this example, that subset is 13.97% of the
+application size. This means that if you somehow can remove your dependency on
+<code>myMethodName</code>, you will save at least that 13.97%, and possibly some more from
+the reachable size, but how much of that we are not certain.</p>
+<h3>Coverage tools</h3>
+<p>Coverage information requires a bit more setup and work to get them running. The
+steps are as follows:</p><ul><li>
+<p>Compile an app with dart2js using <code>--dump-info</code> and defining the
+Dart environment <code>traceCalls=post</code>:</p></li></ul>
+<pre><code>DART_VM_OPTIONS="-DtraceCalls=post" dart2js --dump-info main.dart
+</code></pre>
+<p>  Because coverage/tracing data is currently experimental, the feature is
+  not exposed as a flag in dart2js, but you can enable it using the Dart
+  environment flag. The flag only works dart2js version 1.13.0-dev.0.0 or newer.</p><ul><li>Launch the coverage server tool to serve up the JS code of your app:</li></ul>
+<pre class="bash"><code>pub global run dart2js_info:coverage_log_server main.dart.js
+</code></pre><ul><li>
+<p>(optional) If you have a complex application setup, you may need to serve an
+html file or integrate your application server to proxy to the log server
+any GET request for the .dart.js file and /coverage POST requests that send
+coverage data.</p></li><li>
+<p>Load your app and use it to excersize the entire code.</p></li><li>
+<p>Shut down the coverage server (Ctrl-C). This will emit a file named
+<code>mail.dart.js.coverage.json</code></p></li><li>
+<p>Finally, run the live code analysis tool given it both the info and
+converage json files:</p></li></ul>
+<pre class="bash"><code>pub global run dart2js_info:live_code_size_analysis main.dart.info.json main.dart.coverage.json
+</code></pre>
+<h2>Code location, features and bugs</h2>
+<p>This package is developed in <a href="https://github.com/dart-lang/dart2js_info/">github</a>.  Please file feature requests and
+bugs at the <a href="https://github.com/dart-lang/dart2js_info/issues">issue tracker</a>.</p>
       
       </section>
 
