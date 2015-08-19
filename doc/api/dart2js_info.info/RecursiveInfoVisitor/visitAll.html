@@ -90,6 +90,8 @@
 </li>
       <li><a href="dart2js_info.info/RecursiveInfoVisitor/visitClass.html">visitClass</a>
 </li>
+      <li>visitConstant
+</li>
       <li><a href="dart2js_info.info/RecursiveInfoVisitor/visitField.html">visitField</a>
 </li>
       <li><a href="dart2js_info.info/RecursiveInfoVisitor/visitFunction.html">visitFunction</a>
@@ -129,6 +131,7 @@
   // Note: we don&apos;t visit functions, fields, classes, and typedefs because
   // they are reachable from the library info.
   info.libraries.forEach(visitLibrary);
+  info.constants.forEach(visitConstant);
 }</code></pre>
     </section>
 
@@ -142,7 +145,7 @@
         <div class="container">
             <p class="text-center">
                 <span class="no-break">
-                  dart2js_info 0.0.1 api docs
+                  dart2js_info 0.0.2 api docs
                 </span>
                 &bull;
                 <span class="copyright no-break">

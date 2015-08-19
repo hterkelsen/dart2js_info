@@ -91,6 +91,10 @@
 </li>
       <li><a href="dart2js_info.info/FieldInfo/inferredType.html">inferredType</a>
 </li>
+      <li><a href="dart2js_info.info/FieldInfo/initializer.html">initializer</a>
+</li>
+      <li><a href="dart2js_info.info/FieldInfo/isConst.html">isConst</a>
+</li>
       <li>kind
 </li>
       <li>name
@@ -138,13 +142,20 @@
 
     <section class="summary source-code" id="source">
       <h2>Source</h2>
-      <pre><code class="prettyprint lang-dart">Map toJson() =&gt; super.toJson()
-  ..addAll({
-    &apos;children&apos;: closures.map((i) =&gt; i.serializedId).toList(),
-    &apos;inferredType&apos;: inferredType,
-    &apos;code&apos;: code,
-    &apos;type&apos;: type,
-  });</code></pre>
+      <pre><code class="prettyprint lang-dart">Map toJson() {
+  var result = super.toJson()
+    ..addAll({
+      &apos;children&apos;: closures.map((i) =&gt; i.serializedId).toList(),
+      &apos;inferredType&apos;: inferredType,
+      &apos;code&apos;: code,
+      &apos;type&apos;: type,
+    });
+  if (isConst) {
+    result[&apos;const&apos;] = true;
+    if (initializer != null) result[&apos;initializer&apos;] = initializer.serializedId;
+  }
+  return result;
+}</code></pre>
     </section>
 
   </div> <!-- /.main-content -->
@@ -157,7 +168,7 @@
         <div class="container">
             <p class="text-center">
                 <span class="no-break">
-                  dart2js_info 0.0.1 api docs
+                  dart2js_info 0.0.2 api docs
                 </span>
                 &bull;
                 <span class="copyright no-break">

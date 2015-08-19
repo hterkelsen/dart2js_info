@@ -90,6 +90,7 @@ information. Bear in mind that even with all these tools, it is not trivial to
 isolate code-size issues. We just hope that these tools make things a bit
 earier.</p>
 <h2>Status</h2>
+<p><a href="https://travis-ci.org/dart-lang/dart2js_info"><a href="https://travis-ci.org/dart-lang/dart2js_info.svg"><img alt="Build Status" src="https://travis-ci.org/dart-lang/dart2js_info.svg"></img></a></a></p>
 <p>Currently, most tools available here can be used to analyze code-size and
 attibution of code-size to different parts of your app. With time, we hope to
 add more data to the <code>.info.json</code> files, and include better tools to help
@@ -179,15 +180,12 @@ specifications.  Each group is specified by a map of 3 entries:</p><ul><li>
   dividing line. If missing, the cluster index defaults to 0.</p></li></ul>
 <p>Here is an example configuration, with comments about what each entry does:</p>
 <pre class="yaml"><code>groups:
-# This group shows the total size of all libraries together, it is shown in
-# cluster #3, which happens to be the last cluster in this example:
-- name: "Total (excludes preambles, statics &amp; consts)"
-  regexp: ".*"
-  cluster: 3
-
 # This group shows the total size for all libraries that were loaded from
-# file:// urls:
-- { name: "Loose files", regexp: "file://.*", cluster: 2}
+# file:// urls, it is shown in cluster #2, which happens to be the last
+# cluster in this example before the totals are shown:
+- name: "Loose files"
+  regexp: "file://.*"
+  cluster: 2
 
 # This group shows the total size of all code loaded from packages:
 - { name: "All packages", regexp: "package:.*", cluster: 2}
@@ -209,6 +207,11 @@ specifications.  Each group is specified by a map of 3 entries:</p><ul><li>
 from a file:// url, and we use as a name the relative path to it.
 - regexp: "file:///my/project/dir/(.*)"
 </code></pre>
+<p>Regardless of the grouping configuration, the tool will display the total code
+size attributed of all libraries, constants, and the program size.</p>
+<p><strong>Note</strong>: eventually you should expect all numbers to add up to the program
+size. Currently dart2js's <code>--dump-info</code> is not complete, so numbers for
+bootstraping code and lazy static initializers are missing.</p>
 <h3>Function size analysis tool</h3>
 <p>This command-line tool presents how much each function contributes to the total
 code of your application.  We use dependency information to compute dominance
@@ -250,7 +253,7 @@ Dart environment <code>traceCalls=post</code>:</p></li></ul>
 html file or integrate your application server to proxy to the log server
 any GET request for the .dart.js file and /coverage POST requests that send
 coverage data.</p></li><li>
-<p>Load your app and use it to excersize the entire code.</p></li><li>
+<p>Load your app and use it to exercise the entire code.</p></li><li>
 <p>Shut down the coverage server (Ctrl-C). This will emit a file named
 <code>mail.dart.js.coverage.json</code></p></li><li>
 <p>Finally, run the live code analysis tool given it both the info and
@@ -290,7 +293,7 @@ bugs at the <a href="https://github.com/dart-lang/dart2js_info/issues">issue tra
         <div class="container">
             <p class="text-center">
                 <span class="no-break">
-                  dart2js_info 0.0.1 api docs
+                  dart2js_info 0.0.2 api docs
                 </span>
                 &bull;
                 <span class="copyright no-break">

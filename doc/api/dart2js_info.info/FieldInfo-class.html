@@ -88,6 +88,7 @@
       <li><a href="dart2js_info.info/BasicInfo-class.html">BasicInfo</a></li>
       <li><a href="dart2js_info.info/ClassInfo-class.html">ClassInfo</a></li>
       <li><a href="dart2js_info.info/CodeInfo-class.html">CodeInfo</a></li>
+      <li><a href="dart2js_info.info/ConstantInfo-class.html">ConstantInfo</a></li>
       <li><a href="dart2js_info.info/DependencyInfo-class.html">DependencyInfo</a></li>
       <li><a href="dart2js_info.info/FieldInfo-class.html">FieldInfo</a></li>
       <li><a href="dart2js_info.info/FunctionInfo-class.html">FunctionInfo</a></li>
@@ -188,6 +189,26 @@
     </div>
     <p>The type inferred by dart2js's whole program analysis</p>
             </dd>
+            <dt id="initializer" class="property">
+                <span class="name"><a href="dart2js_info.info/FieldInfo/initializer.html">initializer</a></span>
+                <span class="signature">&#8594; <a href="dart2js_info.info/ConstantInfo-class.html">ConstantInfo</a></span>
+            </dt>
+            <dd>
+                <div class="features">
+        read / write
+    </div>
+    <p>When <a href="dart2js_info.info/FieldInfo/isConst.html">isConst</a> is true, the constant initializer expression.</p>
+            </dd>
+            <dt id="isConst" class="property">
+                <span class="name"><a href="dart2js_info.info/FieldInfo/isConst.html">isConst</a></span>
+                <span class="signature">&#8594; bool</span>
+            </dt>
+            <dd>
+                <div class="features">
+        read / write
+    </div>
+    <p>Whether this corresponds to a const field declaration.</p>
+            </dd>
             <dt id="kind" class="property">
             <span class="name ">kind</span>    
                 <span class="signature">&#8594; <a href="dart2js_info.info/InfoKind-class.html">InfoKind</a></span>
@@ -277,7 +298,7 @@ is generated.</p>
 
         <dl class="constructor-summary-list">
             <dt id="FieldInfo" class="callable">
-                <span class="name"><a href="dart2js_info.info/FieldInfo/FieldInfo.html">FieldInfo</a></span><span class="signature">({<span class="parameter" id="-param-name"><span class="type-annotation">String</span> <span class="parameter-name">name</span></span>, <span class="parameter" id="-param-coverageId"><span class="type-annotation">String</span> <span class="parameter-name">coverageId</span></span>, <span class="parameter" id="-param-size"><span class="type-annotation">int</span> <span class="parameter-name">size</span>: <span class="default-value">0</span></span>, <span class="parameter" id="-param-type"><span class="type-annotation">String</span> <span class="parameter-name">type</span></span>, <span class="parameter" id="-param-inferredType"><span class="type-annotation">String</span> <span class="parameter-name">inferredType</span></span>, <span class="parameter" id="-param-closures"><span class="type-annotation">List&lt;<a href="dart2js_info.info/FunctionInfo-class.html">FunctionInfo</a>&gt;</span> <span class="parameter-name">closures</span></span>, <span class="parameter" id="-param-code"><span class="type-annotation">String</span> <span class="parameter-name">code</span></span>, <span class="parameter" id="-param-outputUnit"><span class="type-annotation"><a href="dart2js_info.info/OutputUnitInfo-class.html">OutputUnitInfo</a></span> <span class="parameter-name">outputUnit</span></span>})</span>
+                <span class="name"><a href="dart2js_info.info/FieldInfo/FieldInfo.html">FieldInfo</a></span><span class="signature">({<span class="parameter" id="-param-name"><span class="type-annotation">String</span> <span class="parameter-name">name</span></span>, <span class="parameter" id="-param-coverageId"><span class="type-annotation">String</span> <span class="parameter-name">coverageId</span></span>, <span class="parameter" id="-param-size"><span class="type-annotation">int</span> <span class="parameter-name">size</span>: <span class="default-value">0</span></span>, <span class="parameter" id="-param-type"><span class="type-annotation">String</span> <span class="parameter-name">type</span></span>, <span class="parameter" id="-param-inferredType"><span class="type-annotation">String</span> <span class="parameter-name">inferredType</span></span>, <span class="parameter" id="-param-closures"><span class="type-annotation">List&lt;<a href="dart2js_info.info/FunctionInfo-class.html">FunctionInfo</a>&gt;</span> <span class="parameter-name">closures</span></span>, <span class="parameter" id="-param-code"><span class="type-annotation">String</span> <span class="parameter-name">code</span></span>, <span class="parameter" id="-param-outputUnit"><span class="type-annotation"><a href="dart2js_info.info/OutputUnitInfo-class.html">OutputUnitInfo</a></span> <span class="parameter-name">outputUnit</span></span>, <span class="parameter" id="-param-isConst"><span class="type-annotation">bool</span> <span class="parameter-name">isConst</span></span>})</span>
             </dt>
             <dd>
                 <p></p>
@@ -339,6 +360,10 @@ is generated.</p>
 </li>
       <li><a href="dart2js_info.info/FieldInfo/inferredType.html">inferredType</a>
 </li>
+      <li><a href="dart2js_info.info/FieldInfo/initializer.html">initializer</a>
+</li>
+      <li><a href="dart2js_info.info/FieldInfo/isConst.html">isConst</a>
+</li>
       <li>kind
 </li>
       <li>name
@@ -378,7 +403,7 @@ is generated.</p>
         <div class="container">
             <p class="text-center">
                 <span class="no-break">
-                  dart2js_info 0.0.1 api docs
+                  dart2js_info 0.0.2 api docs
                 </span>
                 &bull;
                 <span class="copyright no-break">
