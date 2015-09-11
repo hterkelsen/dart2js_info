@@ -139,8 +139,9 @@ determine why code that is not used is being included in your app.</p></li></ul>
 this tool only supports the <code>some_path</code> query, which gives you the shortest path
 for how one function depends on another.</p>
 <p>Run this tool as follows:</p>
-<pre class="bash"><code>pub global activate dart2js_info # only needed once
-pub global run dart2js_info:code_deps out.js.info.json some_path main foo
+<pre class="bash"><code># activate is only needed once to install the dart2js_info* executables
+pub global activate dart2js_info
+dart2js_info_code_deps out.js.info.json some_path main foo
 </code></pre>
 <p>The arguments to the query are regular expressions that can be used to
 select a single element in your program. If your regular expression is too
@@ -156,11 +157,11 @@ sufficient to just write that name as your regular expression.</p>
 <p>This command-line tool shows the size distribution of generated code among
 libraries. It can be run as follows:</p>
 <pre class="bash"><code>pub global activate dart2js_info # only needed once
-pub global run dart2js_info:library_size_split out.js.info.json
+dart2js_info_library_size_split out.js.info.json
 </code></pre>
 <p>Libraries can be grouped using regular expressions. You can
 specify what regular expressions to use by providing a <code>grouping.yaml</code> file:</p>
-<pre class="bash"><code>pub global run dart2js_info:library_size_split out.js.info.json grouping.yaml
+<pre class="bash"><code>dart2js_info_library_size_split out.js.info.json grouping.yaml
 </code></pre>
 <p>The format of the <code>grouping.yaml</code> file is as follows:</p>
 <pre class="yaml"><code>groups:
@@ -218,7 +219,7 @@ code of your application.  We use dependency information to compute dominance
 and reachability data as well.</p>
 <p>When you run:</p>
 <pre class="bash"><code>pub global activate dart2js_info # only needed once
-pub global run dart2js_info:function_size_analysis out.js.info.json
+dart2js_info_function_size_analysis out.js.info.json
 </code></pre>
 <p>the tool produces a table output with lots of entries. Here is an example entry
 with the corresponding table header:</p>
@@ -247,7 +248,7 @@ Dart environment <code>traceCalls=post</code>:</p></li></ul>
 <p>  Because coverage/tracing data is currently experimental, the feature is
   not exposed as a flag in dart2js, but you can enable it using the Dart
   environment flag. The flag only works dart2js version 1.13.0-dev.0.0 or newer.</p><ul><li>Launch the coverage server tool to serve up the JS code of your app:</li></ul>
-<pre class="bash"><code>pub global run dart2js_info:coverage_log_server main.dart.js
+<pre class="bash"><code>dart2js_info_coverage_log_server main.dart.js
 </code></pre><ul><li>
 <p>(optional) If you have a complex application setup, you may need to serve an
 html file or integrate your application server to proxy to the log server
@@ -258,7 +259,7 @@ coverage data.</p></li><li>
 <code>mail.dart.js.coverage.json</code></p></li><li>
 <p>Finally, run the live code analysis tool given it both the info and
 converage json files:</p></li></ul>
-<pre class="bash"><code>pub global run dart2js_info:live_code_size_analysis main.dart.info.json main.dart.coverage.json
+<pre class="bash"><code>dart2js_info_live_code_size_analysis main.dart.info.json main.dart.coverage.json
 </code></pre>
 <h2>Code location, features and bugs</h2>
 <p>This package is developed in <a href="https://github.com/dart-lang/dart2js_info/">github</a>.  Please file feature requests and
@@ -293,7 +294,7 @@ bugs at the <a href="https://github.com/dart-lang/dart2js_info/issues">issue tra
         <div class="container">
             <p class="text-center">
                 <span class="no-break">
-                  dart2js_info 0.0.2 api docs
+                  dart2js_info 0.0.3 api docs
                 </span>
                 &bull;
                 <span class="copyright no-break">
